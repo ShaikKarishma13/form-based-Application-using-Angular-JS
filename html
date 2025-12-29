@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        .form-element {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 13px;
+        }
+
+        .add-button,
+        .remove-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .remove-button {
+            background-color: #f44336;
+        }
+
+        .remove-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .add-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body ng-app="DynamicFormsApp" ng-controller="FormController">
+
+    <div class="container">
+        <h1>Web Technologies Week-7</h1>
+        <h3>Dynamic Form Fields Using ng-repeat</h3>
+
+        <form name="dynamicForm">
+
+            <div ng-repeat="name in names track by $index" class="form-element" ng-show="$index === names.length - 1">
+
+                <!-- Name REQUIRED -->
+                <input type="text"
+                       ng-model="name.name"
+                       name="name{{$index}}"
+                       placeholder="Enter Name"
+                       required>
+                <span class="error-message"
+                      ng-show="dynamicForm['name' + $index].$touched && dynamicForm['name' + $index].$invalid">
+                    Name is required
+                </span>
+
+                <!-- Email REQUIRED -->
+                <input type="email"
+                       ng-model="name.email"
+                       name="email{{$index}}"
+                       placeholder="Enter Email"
+                       required>
+                <span class="error-message"
+                      ng-show="dynamicForm['email' + $index].$touched && dynamicForm['email' + $index].$invalid">
+                    Enter a valid email address
+                </span>
+
+                <!-- Phone REQUIRED 10 DIGITS -->
+                <input type="text"
+                       ng-model="name.phone"
+                       name="phone{{$index}}"
+                       placeholder="Enter Phone Number"
+                       ng-pattern="/^[0-9]{10}$/"
+                       required>
+                <span class="error-message"
+                      ng-show="dynamicForm['phone' + $index].$touched && dynamicForm['phone' + $index].$invalid">
+                    Enter a valid 10-digit phone number
+                </span>
+
+                <!-- Gender -->
+                <label>Select Gender:</label>
+                <label>
+                    <input type="radio" ng-model="name.gender" value="male"> Male
+                </label>
+                <label>
+                    <input type="radio" ng-model="name.gender" value="female"> Female
+                </label>
+
+                <!-- Interests -->
+                <label>Select Interests:</label>
+                <label>
+                    <input type="checkbox" ng-model="name.interests.sports"> Sports
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="name.interests.movies"> Movies
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="name.interests.travel"> Travel
+                </label>
+
+                <button ng-click="removeName($index)" class="remove-button">Remove</button>
+            </div>
+
+            <button ng-click="addName()" class="add-button">Add Name</button>
+
+            <p class="error-message" ng-show="dynamicForm.$invalid">
+                Please fill all required fields correctly.
+            </p>
+        </form>
+
+        <hr>
+
+        <!-- Display Entered Details -->
+        <div class="user-details-container">
+            <div ng-repeat="name in names track by $index" class="user-details" ng-show="name.name">
+                <h4>User {{$index + 1}}</h4>
+                <p><strong>Name:</strong> {{name.name}}</p>
+                <p><strong>Email:</strong> {{name.email}}</p>
+                <p><strong>Phone:</strong> {{name.phone}}</p>
+                <p><strong>Gender:</strong> {{name.gender}}</p>
+
+                <p><strong>Interests:</strong></p>
+                <ul>
+                    <li ng-show="name.interests.sports">Sports</li>
+                    <li ng-show="name.interests.movies">Movies</li>
+                    <li ng-show="name.interests.travel">Travel</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        angular.module('DynamicFormsApp', [])
+            .controller('FormController', function ($scope) {
+
+                $scope.names = [{
+                    name: '',
+                    email: '',
+                    phone: '',
+                    gender: '',
+                    interests: { sports: false, movies: false, travel: false }
+                }];
+
+                $scope.addName = function () {
+                    $scope.names.push({
+                        name: '',
+                        email: '',
+                        phone: '',
+                        gender: '',
+                        interests: { sports: false, movies: false, travel: false }
+                    });
+                };
+
+                $scope.removeName = function (index) {
+                    $scope.names.splice(index, 1);
+                };
+            });
+    </script>
+
+</body>
+
+</html>
